@@ -2,7 +2,11 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-const app = express()
+const app = express();
+
+app.get("/", (req, res) => {
+  res.send("hello server");
+});
 
 app.use(
   cors({
@@ -17,7 +21,10 @@ app.use(
 );
 
 app.use(express.static("public"));
-
 app.use(cookieParser());
+
+import { userRouter } from "./routes/users.routes.js";
+
+app.use("/api/v1/users", userRouter);
 
 export default app;
