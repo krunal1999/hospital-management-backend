@@ -17,6 +17,25 @@ const Roles = {
   PATIENT: "patient",
   ADMIN: "admin",
 };
+const options = {
+  httpOnly: true,
+  secure: true,
+};
+
+const generateAccessTokenWithID = async (userId) => {
+  try {
+    const currentUser = await User.findById(userId);
+    const accessToken = await currentUser.generateAccessToken();
+    console.log(accessToken);
+    currentUser.token = accessToken;
+
+    await currentUser.save({ validateBeforeSave: false });
+
+    return accessToken;
+  } catch (error) {
+    throw new ApiError(500, "Token Not Generated");
+  }
+};
 
 const registerUser = asyncHandler(async (req, res) => {
   // it is not protected route so no need of token
@@ -27,9 +46,9 @@ const registerUser = asyncHandler(async (req, res) => {
 
     console.log(email);
 
-    // if (!email || !password || !fullName || !role) {
-    //   throw new ApiError(400, {}, "All Feilds Are Required");
-    // }
+    if (!email || !password || !fullName || !role) {
+      throw new ApiError(400, {}, "All Feilds Are Required");
+    }
 
     // email is unique, so check if user exist with same email id
     //if email exist throw error , otherwise move ahead
@@ -71,7 +90,6 @@ const registerUser = asyncHandler(async (req, res) => {
       });
       console.log(patient);
     }
-    console.log(createdUser);
 
     //return res without password
     return res
@@ -79,11 +97,79 @@ const registerUser = asyncHandler(async (req, res) => {
       .json(new ApiResponse(201, createdUser, "User Created"));
   } catch (error) {
     console.error("Error:", error);
-    res.status(501).json(new ApiError(501, {}, "User Not Created"));
+    res.status(501).json(new ApiError(501, {}, error));
   }
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  console.log(req.body);
+  try {
+    // get the data , validate data
+    const { email, password } = req.body;
+    console.log(email);
+
+    if (!email || !password) {
+      throw new ApiError(400, {}, "All Fields Required");
+    }
+
+    // check if user exist or not
+    const existedUser = await User.findOne({ email }).select("-password");
+
+    if (!existedUser) {
+      throw new ApiError(400, {}, "User not found");
+    }
+
+    // check the credential, match the password
+    const matchPass = await existedUser.isPasswordCorrect(password);
+
+    if (!matchPass) {
+      throw new ApiError(401, {}, "User or Password does not match");
+    }
+    // generate access token
+    const accessToken = await generateAccessTokenWithID(existedUser._id);
+
+    // const loggedUser = await User.findById(existedUser._id).select("-password");
+    console.log(existedUser._id);
+
+    let loggedUser;
+    if (existedUser.role === Roles.DOCTOR) {
+      const userId = existedUser._id;
+      await Doctor.findOne({ userId })
+        .then((doctor) => {
+          if (doctor) {
+            loggedUser = doctor;
+          } else {
+            throw new ApiError(400, {}, "No User Found");
+          }
+        })
+        .catch((err) => {
+          console.error("Error finding doctor:", err);
+        });
+    } else if (existedUser.role === Roles.PATIENT) {
+      const userId = existedUser._id;
+      await Patient.findOne({ userId })
+        .then((patient) => {
+          if (patient) {
+            loggedUser = patient;
+          } else {
+            throw new ApiError(400, {}, "No User Found");
+          }
+        })
+        .catch((err) => {
+          console.error("Error finding patient:", err);
+        });
+    } else {
+      loggedUser = existedUser;
+    }
+
+    // send res
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .json(new ApiResponse(200, loggedUser, "user logged"));
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(501).json(new ApiError(501, {}, error));
+  }
 });
+
 export { registerUser, loginUser };
