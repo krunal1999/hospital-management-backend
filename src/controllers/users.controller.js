@@ -112,7 +112,7 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
     // check if user exist or not
-    const existedUser = await User.findOne({ email }).select("-password");
+    const existedUser = await User.findOne({ email });
 
     if (!existedUser) {
       throw new ApiError(400, {}, "User not found");
@@ -161,15 +161,43 @@ const loginUser = asyncHandler(async (req, res) => {
       loggedUser = existedUser;
     }
 
+    const { fullName, role } = existedUser;
+
     // send res
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      .json(new ApiResponse(200, loggedUser, "user logged"));
+      .json(
+        new ApiResponse(
+          200,
+          { loggedUser, email, role, fullName },
+          "user logged"
+        )
+      );
   } catch (error) {
     console.error("Error:", error);
     res.status(501).json(new ApiError(501, {}, error));
   }
 });
 
-export { registerUser, loginUser };
+const logout = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        token: undefined,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .json(new ApiResponse(200, {}, "User Logged Out"));
+});
+
+export { registerUser, loginUser, logout };
+
