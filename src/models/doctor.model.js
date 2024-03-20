@@ -4,72 +4,88 @@ const doctorSchema = new mongoose.Schema(
   {
     appointmentPrice: {
       type: String,
-      required: true,
+
+      default: "",
     },
     qualification: {
       type: String,
-      required: true,
+
+      default: "",
     },
     experience: {
       type: String,
-      required: true,
+
+      default: "",
     },
     bio: {
       type: String,
-      required: true,
+
+      default: "",
     },
     about: {
       type: String,
-      required: true,
+
+      default: "",
     },
     timeslot: {
       type: String,
-      required: true,
+
+      default: "",
     },
     avgRating: {
       type: String,
-      required: true,
+
+      default: "",
     },
     totalRating: {
       type: String,
-      required: true,
+
+      default: "",
     },
     isApproved: {
       type: String,
-      required: true,
+
+      default: "",
     },
     isAllowed: {
       type: String,
-      required: true,
+
+      default: "",
     },
     role: {
       type: String,
-      required: true,
+
+      default: "",
     },
     specialization: {
       type: String,
-      required: true,
+
+      default: "",
     },
     phone: {
       type: String,
-      required: true,
+
+      default: "",
     },
     photo: {
       type: String,
-      required: true,
+
+      default: "",
     },
     gender: {
       type: String,
-      required: true,
+
+      default: "",
     },
     age: {
       type: String,
-      required: true,
+
+      default: "",
     },
-    userId:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"User"
-    }
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   { timestamps: true }
 );

@@ -22,6 +22,11 @@ app.use(
 
 app.use(express.static("public"));
 app.use(cookieParser());
+app.use(
+  express.json({
+    limit: "16kb",
+  })
+);
 
 import { userRouter } from "./routes/users.routes.js";
 
