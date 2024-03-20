@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { Doctor } from "../models/doctor.model.js";
+import { Patient } from "../models/patient.model.js";
 
 // todo : RegisterUser , LogginUser , LogoutUser, GenerateAccessToken
 
@@ -46,9 +47,8 @@ const registerUser = asyncHandler(async (req, res) => {
       email: email,
       password: password,
       role: role,
-      
     });
-    
+
     // check if user is saved or not
     const createdUser = await User.findById(currentUser._id).select(
       "-password"
@@ -62,25 +62,28 @@ const registerUser = asyncHandler(async (req, res) => {
     if (role === Roles.DOCTOR) {
       const doctor = await Doctor.create({
         userId: createdUser._id,
+        role: Roles.DOCTOR,
       });
-      console.log(doctor)
+    } else if (role === Roles.PATIENT) {
+      const patient = await Patient.create({
+        userId: createdUser._id,
+        role: Roles.PATIENT,
+      });
+      console.log(patient);
     }
-    console.log(createdUser)
+    console.log(createdUser);
 
     //return res without password
     return res
       .status(201)
       .json(new ApiResponse(201, createdUser, "User Created"));
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     res.status(501).json(new ApiError(501, {}, "User Not Created"));
   }
 });
 
-
-const loginUser = asyncHandler(async(req,res)=>{
-
-  console.log(req.body)
-
-})
-export { registerUser,loginUser };
+const loginUser = asyncHandler(async (req, res) => {
+  console.log(req.body);
+});
+export { registerUser, loginUser };
