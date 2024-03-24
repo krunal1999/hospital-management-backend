@@ -1,24 +1,21 @@
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-
 import { ApiError } from "../utils/ApiError.js";
+
 import { User } from "../models/user.model.js";
 import { Doctor } from "../models/doctor.model.js";
 import { Patient } from "../models/patient.model.js";
 
-// todo : RegisterUser , LogginUser , LogoutUser, GenerateAccessToken
 
-// const registerUser = asyncHandler(async (req, res) => {
-//   return res.status(200).json(new ApiResponse(200, {}, "Done"));
-// });
 
 const Roles = {
   DOCTOR: "doctor",
   PATIENT: "patient",
   ADMIN: "admin",
 };
+
 const options = {
-  httpOnly: true,
+  httpOnly: false,
   secure: true,
 };
 
@@ -26,7 +23,7 @@ const generateAccessTokenWithID = async (userId) => {
   try {
     const currentUser = await User.findById(userId);
     const accessToken = await currentUser.generateAccessToken();
-    console.log(accessToken);
+    console.log("token", accessToken);
     currentUser.token = accessToken;
 
     await currentUser.save({ validateBeforeSave: false });
@@ -88,7 +85,7 @@ const registerUser = asyncHandler(async (req, res) => {
         userId: createdUser._id,
         role: Roles.PATIENT,
       });
-      console.log(patient);
+      
     }
 
     //return res without password
@@ -200,4 +197,3 @@ const logout = asyncHandler(async (req, res) => {
 });
 
 export { registerUser, loginUser, logout };
-

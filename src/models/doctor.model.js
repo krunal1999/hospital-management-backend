@@ -2,17 +2,15 @@ import mongoose from "mongoose";
 
 const doctorSchema = new mongoose.Schema(
   {
-    appointmentPrice: {
+    ticketPrice: {
       type: String,
       default: "",
     },
-    qualification: {
-      type: String,
-      default: "",
+    qualifications: {
+      type: Array,
     },
-    experience: {
-      type: String,
-      default: "",
+    experiences: {
+      type: Array,
     },
     bio: {
       type: String,
@@ -22,25 +20,28 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    timeslot: {
-      type: String,
-      default: "",
+    timeSlots: {
+      type: Array,
     },
     avgRating: {
       type: String,
-      default: "",
+      default: "0",
     },
     totalRating: {
       type: String,
-      default: "",
+      default: "0",
     },
     isApproved: {
       type: String,
-      default: "",
+      default: "pending",
     },
     isAllowed: {
-      type: String,
-      default: "",
+      type: Boolean,
+      default: false,
+    },
+    isProfileCompleted: {
+      type: Boolean,
+      default: false,
     },
     role: {
       type: String,
@@ -62,10 +63,7 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    age: {
-      type: String,
-      default: "",
-    },
+
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

@@ -14,6 +14,7 @@ app.use(
     credentials: true,
   })
 );
+app.use(cookieParser());
 app.use(
   express.urlencoded({
     extended: true,
@@ -21,7 +22,6 @@ app.use(
 );
 
 app.use(express.static("public"));
-app.use(cookieParser());
 app.use(
   express.json({
     limit: "16kb",
@@ -29,7 +29,10 @@ app.use(
 );
 
 import { userRouter } from "./routes/users.routes.js";
+import { doctorRouter } from "./routes/doctor.routes.js";
 
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/doctor", doctorRouter);
+
 
 export default app;

@@ -27,3 +27,28 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
     throw new ApiError(401, error?.message || "Invalid Access Token");
   }
 });
+
+export const restrict = (roles) => async (req, res, next) => {
+  const userId = req.user._id;
+  const role = req.user.role;
+
+  console.log("role in restrict",role);
+  console.log("user id in req",userId);
+
+  if (!roles.includes(role)) {
+    return res
+      .status(401)
+      .json({ success: false, message: "You're not authorized" });
+  }
+
+  next();
+};
+
+// Middleware to authenticate admin access
+export const adminAuth = restrict(["admin"]);
+
+// Middleware to restrict doctor access
+export const doctorAuth = restrict(["doctor"]);
+
+// Middleware to restrict patient access
+export const patientAuth = restrict(["patient", "admin"]);

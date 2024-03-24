@@ -8,8 +8,6 @@ userRouter.route("/register").post(registerUser);
 userRouter.route("/login").post(loginUser);
 
 
-
-
 userRouter.route("/logout").post(verifyJWT , logout);
 
 
