@@ -63,7 +63,10 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-
+    fullName: {
+      type: String,
+      default: "",
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

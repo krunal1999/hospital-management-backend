@@ -39,3 +39,29 @@ export const getDoctorById = async (req, res) => {
     res.status(500).json(new ApiError(500, {}, "Current Doctor not found"));
   }
 };
+
+export const getAllDoctors = async (req, res) => {
+  try {
+    const { query } = req.query;
+    let doctors;
+
+    if (query) {
+      doctors = await Doctor.find({
+        // isApproved: "",
+        $or: [
+          { fullName: { $regex: query, $options: "i" } },
+          { specialization: { $regex: query, $options: "i" } },
+          { "userId.fullName": { $regex: query, $options: "i" } },
+        ],
+      })
+        .populate("userId", "fullName email")
+        .select("-password");
+    } else {
+      doctors = await Doctor.find().select("-password");
+    }
+
+    res.status(200).json(new ApiResponse(200, doctors, "Doctors Got"));
+  } catch (err) {
+    res.status(404).json(new ApiError(500, {}, "No Doctors"));
+  }
+};
