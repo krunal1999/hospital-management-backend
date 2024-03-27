@@ -1,7 +1,7 @@
 import { ApiResponse } from "../utils/ApiResponse.js";
-// import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { Doctor } from "../models/doctor.model.js";
+import { Review } from "../models/review.model.js";
 
 export const updateDoctor = async (req, res) => {
   const id = req.params.id;
@@ -26,7 +26,6 @@ export const updateDoctor = async (req, res) => {
 
 export const getDoctorById = async (req, res) => {
   const id = req.params.id;
-  console.log(req.body);
 
   try {
     const currentDoctor = await Doctor.findById(id);
@@ -34,6 +33,7 @@ export const getDoctorById = async (req, res) => {
     if (!currentDoctor) {
       return res.status(404).json(new ApiError(404, {}, "Doctor not found"));
     }
+
     res.status(200).json(new ApiResponse(200, currentDoctor, "current Doctor"));
   } catch (err) {
     res.status(500).json(new ApiError(500, {}, "Current Doctor not found"));
@@ -63,5 +63,21 @@ export const getAllDoctors = async (req, res) => {
     res.status(200).json(new ApiResponse(200, doctors, "Doctors Got"));
   } catch (err) {
     res.status(404).json(new ApiError(500, {}, "No Doctors"));
+  }
+};
+
+export const getSingleDoctor = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const currentDoctor = await Doctor.findById(id).populate("reviews");
+
+    if (!currentDoctor) {
+      return res.status(404).json(new ApiError(404, {}, "Doctor not found"));
+    }
+
+    res.status(200).json(new ApiResponse(200, currentDoctor, "current Doctor"));
+  } catch (err) {
+    res.status(500).json(new ApiError(500, {}, "Current Doctor not found"));
   }
 };

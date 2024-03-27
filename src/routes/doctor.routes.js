@@ -4,14 +4,17 @@ import { doctorAuth, verifyJWT } from "../middlewares/verifyJWT.middleware.js";
 import {
   updateDoctor,
   getDoctorById,
-  getAllDoctors
+  getAllDoctors,
+  getSingleDoctor,
 } from "../controllers/doctor.controller.js";
+import reviewRouter from "./review.routes.js";
 
 const doctorRouter = Router();
 
 doctorRouter.route("/").get(getAllDoctors);
-doctorRouter.route("/:id").get(getDoctorById);
+doctorRouter.route("/:id").get(getSingleDoctor);
 
+doctorRouter.use("/:doctorId/reviews", reviewRouter);
 
 doctorRouter.route("/profile/:id").put(verifyJWT, doctorAuth, updateDoctor);
 doctorRouter.route("/profile/me/:id").get(verifyJWT, doctorAuth, getDoctorById);
