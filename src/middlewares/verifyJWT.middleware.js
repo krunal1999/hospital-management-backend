@@ -32,8 +32,8 @@ export const restrict = (roles) => async (req, res, next) => {
   const userId = req.user._id;
   const role = req.user.role;
 
-  console.log("role in restrict",role);
-  console.log("user id in req",userId);
+  console.log("role in restrict", role);
+  console.log("user id in req", userId);
 
   if (!roles.includes(role)) {
     return res
@@ -51,4 +51,5 @@ export const adminAuth = restrict(["admin"]);
 export const doctorAuth = restrict(["doctor"]);
 
 // Middleware to restrict patient access
-export const patientAuth = restrict(["patient", "admin"]);
+// export const patientAuth = restrict(["patient", "admin"]);
+export const patientAuth = restrict(["patient"]);

@@ -7,7 +7,7 @@ const userRouter = Router();
 userRouter.route("/register").post(registerUser);
 userRouter.route("/login").post(loginUser);
 
-
+//secure routes
 userRouter.route("/logout").post(verifyJWT , logout);
 
 

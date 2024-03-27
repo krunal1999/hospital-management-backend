@@ -30,9 +30,10 @@ app.use(
 
 import { userRouter } from "./routes/users.routes.js";
 import { doctorRouter } from "./routes/doctor.routes.js";
+import { patientRouter } from "./routes/patient.routes.js";
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/doctor", doctorRouter);
-
+app.use("/api/v1/patient", patientRouter);
 
 export default app;
