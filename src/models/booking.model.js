@@ -25,6 +25,10 @@ const bookingSchema = new mongoose.Schema({
     enum: ["Available", "Booked", "Cancelled", "Completed"],
     default: "Booked",
   },
+  futureDate: {
+    type: Date, 
+    required: true,
+  },
   doctorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Doctor",

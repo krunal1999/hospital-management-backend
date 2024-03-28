@@ -53,6 +53,11 @@ export const generateSlots = async (req, res) => {
           for (const slot of allocatedTimeSlots) {
             const { day, startingTime, endingTime } = slot;
 
+            const fdate = new Date(dateNow);
+            const [hours, minutes] = startingTime.split(":");
+            fdate.setHours(hours);
+            fdate.setMinutes(minutes);
+
             const emptySlot = new Booking({
               date: dateNow,
               currentDay: dayNow,
@@ -63,6 +68,7 @@ export const generateSlots = async (req, res) => {
               bookingStatus: "Available",
               doctorId: doctor._id,
               patientId: null,
+              futureDate: fdate,
             });
             await emptySlot.save();
           }
@@ -91,7 +97,26 @@ export const generateSlots = async (req, res) => {
 
 export const availableSlots = async (req, res) => {
   try {
-  } catch (err) {}
+    const id = req.params.id;
+    const currentTime = new Date();
+
+    const doctorBookings = await Booking.find({
+      doctorId: id,
+      futureDate: { $gt: currentTime },
+      isAvaliable: true,
+    });
+
+    if (doctorBookings.length > 0) {
+      return res
+        .status(200)
+        .json(new ApiResponse(200, doctorBookings, "Available Slots"));
+    } else {
+      return res.status(200).json(new ApiResponse(200, {}, "No slot"));
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(501).json(new ApiError(501, {}, "Failed To Find Slots"));
+  }
 };
 
 function getDateRange(startDate, endDate) {
@@ -196,3 +221,22 @@ function getDayValue(day) {
   ];
   return daysOfWeek.indexOf(day.toLowerCase());
 }
+
+export const updateBookingStatus = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const updatedBooking = await Booking.findByIdAndUpdate(
+      id,
+      {
+        $set: req.body,
+      },
+      { new: true }
+    );
+    res
+      .status(200)
+      .json(new ApiResponse(200, updatedBooking, "Booking Confirmed"));
+  } catch (err) {
+    res.status(500).json(new ApiError(500, {}, "Booking Failed"));
+  }
+};
