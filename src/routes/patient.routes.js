@@ -5,11 +5,17 @@ import {
   getPatientById,
   updatePatient,
   getMyAppointment,
+  getCompletedAppointment,
+  updateBooking,
 } from "../controllers/patientController.js";
 
 const patientRouter = Router();
 
 patientRouter.route("/profile/:id").put(verifyJWT, patientAuth, updatePatient);
+
+patientRouter
+  .route("/profile/booking/:id")
+  .put(verifyJWT, patientAuth, updateBooking);
 
 patientRouter
   .route("/profile/me/:id")
@@ -19,6 +25,8 @@ patientRouter
   .route("/profile/appointment/:id")
   .get(verifyJWT, patientAuth, getMyAppointment);
 
-// userRouter.route("/logout").post(verifyJWT , logout);
+patientRouter
+  .route("/profile/completeappointment/:id")
+  .get(verifyJWT, patientAuth, getCompletedAppointment);
 
 export { patientRouter };

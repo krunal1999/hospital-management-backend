@@ -31,6 +31,10 @@ const prescriptionSchema = new mongoose.Schema({
   visitedDate: {
     type: Date,
   },
+  paidStatus: {
+    type: String,
+    default: "unpaid",
+  },
 });
 
 export const Prescription = mongoose.model("Prescription ", prescriptionSchema);
