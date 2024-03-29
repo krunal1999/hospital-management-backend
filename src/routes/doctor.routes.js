@@ -6,6 +6,8 @@ import {
   getDoctorById,
   getAllDoctors,
   getSingleDoctor,
+  getAppointment,
+  savePrescription,
 } from "../controllers/doctor.controller.js";
 import reviewRouter from "./review.routes.js";
 
@@ -19,6 +21,12 @@ doctorRouter.use("/:doctorId/reviews", reviewRouter);
 doctorRouter.route("/profile/:id").put(verifyJWT, doctorAuth, updateDoctor);
 doctorRouter.route("/profile/me/:id").get(verifyJWT, doctorAuth, getDoctorById);
 
-// userRouter.route("/logout").post(verifyJWT , logout);
+doctorRouter
+  .route("/profile/appointment/:id")
+  .get(verifyJWT, doctorAuth, getAppointment);
+
+doctorRouter
+  .route("/profile/prescription")
+  .post(verifyJWT, doctorAuth, savePrescription);
 
 export { doctorRouter };

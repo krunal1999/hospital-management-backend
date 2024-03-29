@@ -22,6 +22,7 @@ export const generateSlots = async (req, res) => {
     }
 
     for (let doctor of doctors) {
+
       if (isSlotsCreated >= 1) {
         console.log("Slots are Created for week");
         return res
@@ -41,7 +42,9 @@ export const generateSlots = async (req, res) => {
       //       console.log(timeSlots.length);
 
       let i = 0;
+
       for (let dayRange of daysRange) {
+
         let dayNow = dayRange[0].toLowerCase().trim().replace(/,\s*$/, "");
         let dateNow = dayRange.join(" ");
 
@@ -51,6 +54,7 @@ export const generateSlots = async (req, res) => {
           // console.log(allocatedTimeSlots);
 
           for (const slot of allocatedTimeSlots) {
+            
             const { day, startingTime, endingTime } = slot;
 
             const fdate = new Date(dateNow);
