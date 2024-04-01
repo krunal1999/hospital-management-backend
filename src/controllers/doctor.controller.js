@@ -38,7 +38,7 @@ export const getDoctorById = async (req, res) => {
 
     res.status(200).json(new ApiResponse(200, currentDoctor, "current Doctor"));
   } catch (err) {
-    res.status(500).json(new ApiError(500, {}, "Current Doctor not found"));
+    res.status(500).json(new ApiError(500, {}, "Current Doctor not found 1"));
   }
 };
 
@@ -80,7 +80,7 @@ export const getSingleDoctor = async (req, res) => {
 
     res.status(200).json(new ApiResponse(200, currentDoctor, "current Doctor"));
   } catch (err) {
-    res.status(500).json(new ApiError(500, {}, "Current Doctor not found"));
+    res.status(500).json(new ApiError(500, {}, "Current Doctor not found 2"));
   }
 };
 
@@ -159,10 +159,8 @@ export const updateDoctorAvailable = async (req, res) => {
   const id = req.params.id;
 
   try {
-    
     const originalDoctor = await Doctor.findById(id);
 
-    
     const updatedIsAllowed = !originalDoctor.isAllowed;
 
     const updatedDoctor = await Doctor.findByIdAndUpdate(
@@ -178,5 +176,51 @@ export const updateDoctorAvailable = async (req, res) => {
       .json(new ApiResponse(200, updatedDoctor, "Profile Data Updated"));
   } catch (err) {
     res.status(500).json(new ApiError(500, {}, "Failed To Update Profile"));
+  }
+};
+
+export const getAllPrescription = async (req, res) => {
+  console.log("this ine");
+  try {
+    const allPrescription = await Prescription.find({
+      delivered: false,
+    }).populate({
+      path: "patientId",
+      populate: {
+        path: "userId",
+        select: "fullName email",
+      },
+    });
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, allPrescription, "Prescription successfully"));
+  } catch (error) {
+    console.error("Error saving prescription:", error);
+    res
+      .status(501)
+      .json(new ApiError(501, {}, "Error in getting prescription"));
+  }
+};
+
+export const updatePrescriptioById = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+  console.log("this ine");
+  try {
+    const product = await Prescription.findByIdAndUpdate(
+      id,
+      {
+        delivered: true,
+      },
+      { new: true }
+    );
+
+    res.status(200).json(new ApiResponse(200, {}, " successfully"));
+  } catch (error) {
+    console.error("Error  prescription:", error);
+    res
+      .status(501)
+      .json(new ApiError(501, {}, "Error in getting prescription"));
   }
 };

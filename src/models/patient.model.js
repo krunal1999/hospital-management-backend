@@ -33,6 +33,10 @@ const patientSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  isBlocked: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const Patient = mongoose.model("Patient", patientSchema);

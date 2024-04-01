@@ -14,6 +14,8 @@ import {
   savePrescription,
   updateDoctorApprove,
   updateDoctorAvailable,
+  getAllPrescription,
+  updatePrescriptioById,
 } from "../controllers/doctor.controller.js";
 import reviewRouter from "./review.routes.js";
 
@@ -43,5 +45,13 @@ doctorRouter
 doctorRouter
   .route("/updateavailable/:id")
   .put(verifyJWT, adminAuth, updateDoctorAvailable);
+
+doctorRouter
+  .route("/profile/getallprescription")
+  .get(verifyJWT, adminAuth, getAllPrescription);
+
+doctorRouter
+  .route("/profile/updateprescriptionbyid/:id")
+  .put(verifyJWT, adminAuth, updatePrescriptioById);
 
 export { doctorRouter };

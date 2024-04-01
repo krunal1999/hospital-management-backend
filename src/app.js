@@ -45,6 +45,10 @@ app.use("/api/v1/patient", patientRouter);
 app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/booking", bookingRouter);
 
+
+
+
+// stripe payment
 app.post("/api/v1/create-checkout-session", async (req, res) => {
   const product = req.body;
   console.log(product.products.totalCost);

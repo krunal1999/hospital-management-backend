@@ -35,6 +35,10 @@ const prescriptionSchema = new mongoose.Schema({
     type: String,
     default: "unpaid",
   },
+  delivered: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const Prescription = mongoose.model("Prescription ", prescriptionSchema);
