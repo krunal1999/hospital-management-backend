@@ -1,6 +1,10 @@
 import { Router } from "express";
 
-import { doctorAuth, verifyJWT } from "../middlewares/verifyJWT.middleware.js";
+import {
+  adminAuth,
+  doctorAuth,
+  verifyJWT,
+} from "../middlewares/verifyJWT.middleware.js";
 import {
   updateDoctor,
   getDoctorById,
@@ -8,12 +12,15 @@ import {
   getSingleDoctor,
   getAppointment,
   savePrescription,
+  updateDoctorApprove,
+  updateDoctorAvailable,
 } from "../controllers/doctor.controller.js";
 import reviewRouter from "./review.routes.js";
 
 const doctorRouter = Router();
 
 doctorRouter.route("/").get(getAllDoctors);
+
 doctorRouter.route("/:id").get(getSingleDoctor);
 
 doctorRouter.use("/:doctorId/reviews", reviewRouter);
@@ -28,5 +35,13 @@ doctorRouter
 doctorRouter
   .route("/profile/prescription")
   .post(verifyJWT, doctorAuth, savePrescription);
+
+doctorRouter
+  .route("/updateapprove/:id")
+  .put(verifyJWT, adminAuth, updateDoctorApprove);
+
+doctorRouter
+  .route("/updateavailable/:id")
+  .put(verifyJWT, adminAuth, updateDoctorAvailable);
 
 export { doctorRouter };

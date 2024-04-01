@@ -5,11 +5,13 @@ import {
   generateSlots,
   availableSlots,
   updateBookingStatus,
+  deleteByDateRange,
 } from "../controllers/booking.controller.js";
 
 const bookingRouter = Router();
 
 bookingRouter.route("/pre-generate-slots").post(generateSlots);
+bookingRouter.route("/delete-slots").delete(deleteByDateRange);
 
 // bookingRouter
 //   .route("/getslots/:id")

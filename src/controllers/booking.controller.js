@@ -22,12 +22,11 @@ export const generateSlots = async (req, res) => {
     }
 
     for (let doctor of doctors) {
-
       if (isSlotsCreated >= 1) {
         console.log("Slots are Created for week");
         return res
-          .status(400)
-          .json(new ApiError(400, {}, "Slots are Created for week"));
+          .status(201)
+          .json(new ApiError(201, {}, "Slots are Created for week"));
       }
       const { timeSlots } = doctor;
 
@@ -44,7 +43,6 @@ export const generateSlots = async (req, res) => {
       let i = 0;
 
       for (let dayRange of daysRange) {
-
         let dayNow = dayRange[0].toLowerCase().trim().replace(/,\s*$/, "");
         let dateNow = dayRange.join(" ");
 
@@ -54,7 +52,6 @@ export const generateSlots = async (req, res) => {
           // console.log(allocatedTimeSlots);
 
           for (const slot of allocatedTimeSlots) {
-            
             const { day, startingTime, endingTime } = slot;
 
             const fdate = new Date(dateNow);
@@ -241,6 +238,40 @@ export const updateBookingStatus = async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, updatedBooking, "Booking Confirmed"));
   } catch (err) {
+    res.status(500).json(new ApiError(500, {}, "Booking Failed"));
+  }
+};
+
+export const deleteByDateRange = async (req, res) => {
+  try {
+    let { startDate, endDate } = req.query;
+    console.log(startDate, endDate);
+
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
+
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+
+    const deleteResult = await Booking.deleteMany({
+      futureDate: {
+        $gte: startDate,
+        $lt: endDate,
+      },
+    });
+
+    console.log(`Deleted ${deleteResult.deletedCount} documents`);
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          {},
+          `Deleted ${deleteResult.deletedCount} documents`
+        )
+      );
+  } catch (err) {
+    console.error("Error deleting documents:", err);
     res.status(500).json(new ApiError(500, {}, "Booking Failed"));
   }
 };

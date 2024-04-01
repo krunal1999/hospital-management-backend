@@ -48,8 +48,8 @@ export const restrict = (roles) => async (req, res, next) => {
 export const adminAuth = restrict(["admin"]);
 
 // Middleware to restrict doctor access
-export const doctorAuth = restrict(["doctor"]);
+export const doctorAuth = restrict(["doctor", "admin"]);
 
 // Middleware to restrict patient access
 // export const patientAuth = restrict(["patient", "admin"]);
-export const patientAuth = restrict(["patient"]);
+export const patientAuth = restrict(["patient", "admin"]);

@@ -6,8 +6,6 @@ import { User } from "../models/user.model.js";
 import { Doctor } from "../models/doctor.model.js";
 import { Patient } from "../models/patient.model.js";
 
-
-
 const Roles = {
   DOCTOR: "doctor",
   PATIENT: "patient",
@@ -85,7 +83,11 @@ const registerUser = asyncHandler(async (req, res) => {
         userId: createdUser._id,
         role: Roles.PATIENT,
       });
-      
+    } else {
+      const admin = await User.create({
+        userId: createdUser._id,
+        role: Roles.ADMIN,
+      });
     }
 
     //return res without password

@@ -134,3 +134,49 @@ export const savePrescription = async (req, res) => {
     res.status(500).json(new ApiError(500, {}, "Error saving prescription"));
   }
 };
+
+export const updateDoctorApprove = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const updatedDoctor = await Doctor.findByIdAndUpdate(
+      id,
+      {
+        isApproved: "approved",
+      },
+      { new: true }
+    );
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, updatedDoctor, "Profile Data Updated"));
+  } catch (err) {
+    res.status(500).json(new ApiError(500, {}, "Failed To Upadate Profile"));
+  }
+};
+
+export const updateDoctorAvailable = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    
+    const originalDoctor = await Doctor.findById(id);
+
+    
+    const updatedIsAllowed = !originalDoctor.isAllowed;
+
+    const updatedDoctor = await Doctor.findByIdAndUpdate(
+      id,
+      {
+        isAllowed: updatedIsAllowed,
+      },
+      { new: true }
+    );
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, updatedDoctor, "Profile Data Updated"));
+  } catch (err) {
+    res.status(500).json(new ApiError(500, {}, "Failed To Update Profile"));
+  }
+};
