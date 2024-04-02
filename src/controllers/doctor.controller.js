@@ -214,9 +214,15 @@ export const updatePrescriptioById = async (req, res) => {
         delivered: true,
       },
       { new: true }
-    );
+    ).populate({
+      path: "patientId",
+      populate: {
+        path: "userId",
+        select: "fullName email",
+      },
+    });
 
-    res.status(200).json(new ApiResponse(200, {}, " successfully"));
+    res.status(200).json(new ApiResponse(200, product, " successfully"));
   } catch (error) {
     console.error("Error  prescription:", error);
     res
