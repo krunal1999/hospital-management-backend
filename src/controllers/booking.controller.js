@@ -53,11 +53,25 @@ export const generateSlots = async (req, res) => {
 
           for (const slot of allocatedTimeSlots) {
             const { day, startingTime, endingTime } = slot;
+            const londonTimezone = "Europe/London";
 
-            const fdate = new Date(dateNow);
-            const [hours, minutes] = startingTime.split(":");
-            fdate.setHours(hours);
-            fdate.setMinutes(minutes);
+            const fsdate = new Date(dateNow);
+            const [hoursStart, minutesStart] = startingTime.split(":");
+            fsdate.setHours(hoursStart);
+            fsdate.setMinutes(minutesStart);
+
+            const fedate = new Date(dateNow);
+            const [hoursEnd, minutesEnd] = endingTime.split(":");
+            fedate.setHours(hoursEnd);
+            fedate.setMinutes(minutesEnd);
+
+            const startFDate = new Date(
+              fsdate.toLocaleString("en-US", { timeZone: londonTimezone })
+            );
+
+            const endFDate = new Date(
+              fedate.toLocaleString("en-US", { timeZone: londonTimezone })
+            );
 
             const emptySlot = new Booking({
               date: dateNow,
@@ -69,7 +83,8 @@ export const generateSlots = async (req, res) => {
               bookingStatus: "Available",
               doctorId: doctor._id,
               patientId: null,
-              futureDate: fdate,
+              futureStartDate: startFDate,
+              futureEndDate: endFDate,
             });
             await emptySlot.save();
           }
@@ -103,7 +118,7 @@ export const availableSlots = async (req, res) => {
 
     const doctorBookings = await Booking.find({
       doctorId: id,
-      futureDate: { $gt: currentTime },
+      futureStartDate: { $gt: currentTime },
       isAvaliable: true,
     });
 
@@ -247,16 +262,16 @@ export const deleteByDateRange = async (req, res) => {
     let { startDate, endDate } = req.query;
     console.log(startDate, endDate);
 
-    startDate = new Date(startDate);
-    endDate = new Date(endDate);
+    let futureStartDate = new Date(startDate);
+    let futureEndDate = new Date(endDate);
 
-    startDate.setHours(0, 0, 0, 0);
-    endDate.setHours(23, 59, 59, 999);
+    futureStartDate.setHours(0, 0, 0, 0);
+    futureEndDate.setHours(23, 59, 59, 999);
 
     const deleteResult = await Booking.deleteMany({
-      futureDate: {
-        $gte: startDate,
-        $lt: endDate,
+      futureStartDate: {
+        $gte: futureStartDate,
+        $lt: futureEndDate,
       },
     });
 

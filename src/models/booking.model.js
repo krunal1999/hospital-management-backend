@@ -25,7 +25,11 @@ const bookingSchema = new mongoose.Schema({
     enum: ["Available", "Booked", "Cancelled", "Completed" , "No Show"],
     default: "Booked",
   },
-  futureDate: {
+  futureStartDate: {
+    type: Date, 
+    required: true,
+  },
+  futureEndDate: {
     type: Date, 
     required: true,
   },
