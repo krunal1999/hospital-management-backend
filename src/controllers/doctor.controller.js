@@ -112,6 +112,32 @@ export const getAppointment = async (req, res) => {
   }
 };
 
+export const getAppointmentComplete = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const myAppointments = await Booking.find({
+      doctorId: id,
+      bookingStatus: { $in: ["Completed", "Cancelled", "NoShow"] },
+    }).populate({
+      path: "patientId",
+      model: "Patient",
+      populate: {
+        path: "userId",
+        select: "fullName email ",
+      },
+    });
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, myAppointments, "Appointment Details"));
+  } catch (err) {
+    res
+      .status(500)
+      .json(new ApiError(500, {}, "Appointment Details not found"));
+  }
+};
+
 export const savePrescription = async (req, res) => {
   // const id = req.params.id;
 
@@ -182,7 +208,6 @@ export const updateDoctorAvailable = async (req, res) => {
 };
 
 export const getAllPrescription = async (req, res) => {
-  console.log("this ine");
   try {
     const allPrescription = await Prescription.find({
       delivered: false,
@@ -193,6 +218,26 @@ export const getAllPrescription = async (req, res) => {
         select: "fullName email",
       },
     });
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, allPrescription, " successfully"));
+  } catch (error) {
+    console.error("Error:", error);
+    res
+      .status(501)
+      .json(new ApiError(501, {}, "Error in getting prescription"));
+  }
+};
+
+export const getPrescriptionByBookingId = async (req, res) => {
+  console.log("this ine");
+  const id = req.params.id;
+  console.log(id);
+  try {
+    const allPrescription = await Prescription.find({
+      bookingId: id,
+    })
 
     res
       .status(200)

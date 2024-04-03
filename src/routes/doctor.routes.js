@@ -16,6 +16,8 @@ import {
   updateDoctorAvailable,
   getAllPrescription,
   updatePrescriptioById,
+  getAppointmentComplete,
+  getPrescriptionByBookingId,
 } from "../controllers/doctor.controller.js";
 import reviewRouter from "./review.routes.js";
 
@@ -33,6 +35,10 @@ doctorRouter
   .get(verifyJWT, doctorAuth, getAppointment);
 
 doctorRouter
+  .route("/profile/appointmentcomplete/:id")
+  .get(verifyJWT, doctorAuth, getAppointmentComplete);
+
+doctorRouter
   .route("/profile/prescription")
   .post(verifyJWT, doctorAuth, savePrescription);
 
@@ -47,6 +53,10 @@ doctorRouter
 doctorRouter
   .route("/profile/getallprescription")
   .get(verifyJWT, adminAuth, getAllPrescription);
+
+doctorRouter
+  .route("/profile/getprescriptionbyId/:id")
+  .get(verifyJWT, doctorAuth, getPrescriptionByBookingId);
 
 doctorRouter
   .route("/profile/updateprescriptionbyid/:id")
