@@ -22,7 +22,6 @@ export const createReview = async (req, res) => {
 
   const patient = await Patient.find({ userId: req.user._id });
 
-  // if (!req.body.patient) req.body.patient = req.user._id;
   if (!req.body.patient) req.body.patient = patient[0]._id;
   req.body.patientName = req.user.fullName;
   req.body.patientPhoto = patient[0].photo;

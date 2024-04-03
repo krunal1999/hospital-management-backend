@@ -25,8 +25,6 @@ doctorRouter.route("/").get(getAllDoctors);
 
 doctorRouter.route("/:id").get(getSingleDoctor);
 
-doctorRouter.use("/:doctorId/reviews", reviewRouter);
-
 doctorRouter.route("/profile/:id").put(verifyJWT, doctorAuth, updateDoctor);
 doctorRouter.route("/profile/me/:id").get(verifyJWT, doctorAuth, getDoctorById);
 
@@ -53,5 +51,7 @@ doctorRouter
 doctorRouter
   .route("/profile/updateprescriptionbyid/:id")
   .put(verifyJWT, adminAuth, updatePrescriptioById);
+
+doctorRouter.use("/:doctorId/reviews", reviewRouter);
 
 export { doctorRouter };

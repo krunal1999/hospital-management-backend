@@ -45,11 +45,13 @@ export const getDoctorById = async (req, res) => {
 export const getAllDoctors = async (req, res) => {
   try {
     const { query } = req.query;
-    let doctors;
+    console.log(req.query);
+    console.log(req.body);
 
+    let doctors;
     if (query) {
+      // Use query instead of query
       doctors = await Doctor.find({
-        // isApproved: "",
         $or: [
           { fullName: { $regex: query, $options: "i" } },
           { specialization: { $regex: query, $options: "i" } },

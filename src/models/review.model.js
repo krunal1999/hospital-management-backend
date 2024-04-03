@@ -49,7 +49,6 @@ reviewSchema.pre(/^find/, function (next) {
   next();
 });
 
-
 reviewSchema.statics.calcAverageRatings = async function (doctorId) {
   const stats = await this.aggregate([
     {
@@ -62,18 +61,24 @@ reviewSchema.statics.calcAverageRatings = async function (doctorId) {
         avgRating: { $avg: "$rating" },
       },
     },
+    {
+      $project: {
+        numOfRating: 1,
+        avgRating: { $round: ["$avgRating", 2] } 
+      }
+    },
   ]);
 
   if (stats.length > 0) {
     await Doctor.findByIdAndUpdate(doctorId, {
       totalRating: stats[0].numOfRating,
-      averageRating: stats[0].avgRating,
+      avgRating: stats[0].avgRating,
     });
   } else {
     // If no reviews found, set totalRating and averageRating to 0
     await Doctor.findByIdAndUpdate(doctorId, {
       totalRating: 0,
-      averageRating: 0,
+      avgRating: 0,
     });
   }
 };
