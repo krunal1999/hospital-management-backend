@@ -5,8 +5,11 @@ import { Booking } from "../models/booking.model.js";
 
 export const generateSlots = async (req, res) => {
   try {
+
     const { startDate, endDate } = req.body;
+
     const dateRange = getDateRange(startDate, endDate);
+    
     const daysRange = dateRange.map((date) => date.split(" "));
 
     const doctors = await Doctor.find({}, "_id timeSlots");
@@ -463,3 +466,4 @@ export const bookedSlotsAll = async (req, res) => {
     return res.status(501).json(new ApiError(501, {}, "Failed To Find Slots"));
   }
 };
+
