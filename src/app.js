@@ -5,9 +5,11 @@ import Stripe from "stripe";
 
 const app = express();
 
-const stripe = new Stripe(
-  "sk_test_51OvnvN09UtBXmetzyMMzDcqBA39rtTedBiFXXz9QfDbJBXmyBoYjJ0ng8eFcgNPLufNu0Uf95AM4j2cl4eozJTN400LYBAfUkL"
-);
+// const stripe = new Stripe(
+//   "sk_test_51OvnvN09UtBXmetzyMMzDcqBA39rtTedBiFXXz9QfDbJBXmyBoYjJ0ng8eFcgNPLufNu0Uf95AM4j2cl4eozJTN400LYBAfUkL"
+// );
+
+const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
 
 app.get("/", (req, res) => {
   res.send("hello server");
@@ -65,7 +67,7 @@ app.post("/api/v1/create-checkout-session", async (req, res) => {
           currency: "gbp",
           unit_amount: product.products.totalCost * 100,
           product_data: {
-            name: "Paying to MediCare",
+            name: "Paying to Hospital Management System",
             description: "Thank You For Support",
           },
         },

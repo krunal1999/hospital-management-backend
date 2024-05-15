@@ -48,7 +48,7 @@ doctorRouter
 
 doctorRouter
   .route("/updateavailable/:id")
-  .put(verifyJWT, adminAuth, updateDoctorAvailable);
+  .put(verifyJWT, doctorAuth, updateDoctorAvailable);
 
 doctorRouter
   .route("/profile/getallprescription")

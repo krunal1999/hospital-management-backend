@@ -50,7 +50,7 @@ export const generateSlots = async (req, res) => {
         let dateNow = dayRange.join(" ");
 
         if (dayNow === timeSlots[i].day) {
-          //   console.log(timeSlots[i].day);
+            console.log(timeSlots[i].day);
           const allocatedTimeSlots = allocateTimeSlots([timeSlots[i]], 60);
           // console.log(allocatedTimeSlots);
 
@@ -259,6 +259,8 @@ export const updateBookingStatus = async (req, res) => {
     res.status(500).json(new ApiError(500, {}, "Booking Failed"));
   }
 };
+
+
 
 export const deleteByDateRange = async (req, res) => {
   try {
