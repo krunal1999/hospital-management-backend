@@ -6,14 +6,14 @@ import { ApiError } from "../utils/ApiError.js";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "krunaldhavle1546@gmail.com",
-    pass: "tjni gaag ouay kani",
+    user: process.env.EMAIl_ADMIN,
+    pass: process.env.EMAIL_PASS
   },
 });
 
 let mailOptions = {
-  from: "krunaldhavle1546@gmail.com",
-  to: "krunaldhavle1999@gmail.com",
+  from: process.env.EMAIl_ADMIN,
+  to: process.env.EMAIL_SECOND_ADMIN,
   subject: "Sending Email using Node.js",
   text: "That was easy!",
 };
