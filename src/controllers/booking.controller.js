@@ -5,19 +5,22 @@ import { Booking } from "../models/booking.model.js";
 
 export const generateSlots = async (req, res) => {
   try {
-
     const { startDate, endDate } = req.body;
 
     const dateRange = getDateRange(startDate, endDate);
-    
+
     const daysRange = dateRange.map((date) => date.split(" "));
 
     const doctors = await Doctor.find({}, "_id timeSlots");
     //     console.log(dateRange);
 
     let isSlotsCreated = 0;
+
     for (const date of dateRange) {
       const existingSlots = await Booking.find({ date }).limit(1);
+
+      console.log(existingSlots);
+
       if (existingSlots.length > 0) {
         isSlotsCreated++;
         continue;
@@ -26,10 +29,11 @@ export const generateSlots = async (req, res) => {
 
     for (let doctor of doctors) {
       if (isSlotsCreated >= 1) {
-        console.log("Slots are Created for week");
-        return res
-          .status(201)
-          .json(new ApiError(201, {}, "Slots are Created for week"));
+        console.log("Slots are Created for date");
+        continue;
+        // return res
+        //   .status(201)
+        //   .json(new ApiError(201, {}, "Slots are Created for week"));
       }
       const { timeSlots } = doctor;
 
@@ -50,7 +54,7 @@ export const generateSlots = async (req, res) => {
         let dateNow = dayRange.join(" ");
 
         if (dayNow === timeSlots[i].day) {
-            console.log(timeSlots[i].day);
+          console.log(timeSlots[i].day);
           const allocatedTimeSlots = allocateTimeSlots([timeSlots[i]], 60);
           // console.log(allocatedTimeSlots);
 
@@ -260,8 +264,6 @@ export const updateBookingStatus = async (req, res) => {
   }
 };
 
-
-
 export const deleteByDateRange = async (req, res) => {
   try {
     let { startDate, endDate } = req.query;
@@ -296,116 +298,129 @@ export const deleteByDateRange = async (req, res) => {
   }
 };
 
-export const generateSlotsById = async (req, res) => {
-  const id = req.params.id;
-  console.log(id);
-  try {
-    const { startDate, endDate } = req.body;
-    const dateRange = getDateRange(startDate, endDate);
-    const daysRange = dateRange.map((date) => date.split(" "));
+// export const generateSlotsById = async (req, res) => {
+//   const id = req.params.id;
+//   console.log("this is dr id", id);
+//   try {
+//     const { startDate, endDate } = req.body;
+//     const dateRange = getDateRange(startDate, endDate);
+//     const daysRange = dateRange.map((date) => date.split(" "));
 
-    // const doctors = await Doctor.find({}, "_id timeSlots");
-    const doctors1 = await Doctor.findById(id, "_id timeSlots");
-    const doctors = doctors1 ? [doctors1] : [];
+//     // const doctors = await Doctor.find({}, "_id timeSlots");
+//     const doctors1 = await Doctor.findById(id, "_id timeSlots");
+//     const doctors = doctors1 ? [doctors1] : [];
 
-    let isSlotsCreated = 0;
-    for (const date of dateRange) {
-      const existingSlots = await Booking.find({ date }).limit(1);
-      if (existingSlots.length > 0) {
-        isSlotsCreated++;
-        continue;
-      }
-    }
+//     console.log(doctors);
 
-    for (let doctor of doctors) {
-      if (isSlotsCreated >= 1) {
-        console.log("Slots are Created");
-        return res
-          .status(201)
-          .json(new ApiError(201, {}, "Slots are Created already"));
-      }
-      const { timeSlots } = doctor;
+//     let isSlotsCreated = 0;
+//     for (const date of dateRange) {
+//       const existingSlots = await Booking.find({ date }).limit(1);
+//       let slotsForDr = existingSlots.filter((slot) => slot.doctorId == id  )
 
-      console.log("Doctor ", doctor._id);
+//       console.log("existingSlots",existingSlots)
+//       if (slotsForDr.length > 0) {
+//         isSlotsCreated++;
+//         continue;
+//       }
+//     }
 
-      // sorted acording to days monday to sunday
-      timeSlots.sort((a, b) => {
-        const dayValueA = getDayValue(a.day);
-        const dayValueB = getDayValue(b.day);
-        return dayValueA - dayValueB;
-      });
-      //       console.log(timeSlots.length);
+//     console.log("isSlotsCreated", isSlotsCreated);
 
-      let i = 0;
+//     for (let doctor of doctors) {
+//       if (isSlotsCreated >= 1) {
+//         console.log("Slots are Created");
+//         return res
+//           .status(201)
+//           .json(new ApiError(201, {}, "Slots are Created already"));
+//       }
 
-      for (let dayRange of daysRange) {
-        let dayNow = dayRange[0].toLowerCase().trim().replace(/,\s*$/, "");
-        let dateNow = dayRange.join(" ");
+     
+//           const { timeSlots } = doctor;
 
-        if (dayNow === timeSlots[i].day) {
-          //   console.log(timeSlots[i].day);
-          const allocatedTimeSlots = allocateTimeSlots([timeSlots[i]], 60);
-          // console.log(allocatedTimeSlots);
+//           console.log("Doctor ", doctor._id);
 
-          for (const slot of allocatedTimeSlots) {
-            const { day, startingTime, endingTime } = slot;
-            const londonTimezone = "Europe/London";
+//           // sorted acording to days monday to sunday
+//           timeSlots.sort((a, b) => {
+//             const dayValueA = getDayValue(a.day);
+//             const dayValueB = getDayValue(b.day);
+//             return dayValueA - dayValueB;
+//           });
+//           //       console.log(timeSlots.length);
 
-            const fsdate = new Date(dateNow);
-            const [hoursStart, minutesStart] = startingTime.split(":");
-            fsdate.setHours(hoursStart);
-            fsdate.setMinutes(minutesStart);
+//           let i = 0;
 
-            const fedate = new Date(dateNow);
-            const [hoursEnd, minutesEnd] = endingTime.split(":");
-            fedate.setHours(hoursEnd);
-            fedate.setMinutes(minutesEnd);
+//           for (let dayRange of daysRange) {
+//             let dayNow = dayRange[0].toLowerCase().trim().replace(/,\s*$/, "");
+//             let dateNow = dayRange.join(" ");
 
-            const startFDate = new Date(
-              fsdate.toLocaleString("en-US", { timeZone: londonTimezone })
-            );
+//             if (dayNow === timeSlots[i].day) {
+//               //   console.log(timeSlots[i].day);
+//               const allocatedTimeSlots = allocateTimeSlots([timeSlots[i]], 60);
+//               // console.log(allocatedTimeSlots);
 
-            const endFDate = new Date(
-              fedate.toLocaleString("en-US", { timeZone: londonTimezone })
-            );
+//               for (const slot of allocatedTimeSlots) {
+//                 const { day, startingTime, endingTime } = slot;
+//                 const londonTimezone = "Europe/London";
 
-            const emptySlot = new Booking({
-              date: dateNow,
-              currentDay: dayNow,
-              slotDay: day,
-              startTime: startingTime,
-              endTime: endingTime,
-              isAvaliable: true,
-              bookingStatus: "Available",
-              doctorId: doctor._id,
-              patientId: null,
-              futureStartDate: startFDate,
-              futureEndDate: endFDate,
-            });
-            await emptySlot.save();
-          }
+//                 const fsdate = new Date(dateNow);
+//                 const [hoursStart, minutesStart] = startingTime.split(":");
+//                 fsdate.setHours(hoursStart);
+//                 fsdate.setMinutes(minutesStart);
 
-          if (i >= timeSlots.length - 1) {
-            break;
-          } else {
-            i = i + 1;
-          }
-        } else {
-          //   console.log("doctor not available");
-        }
-      }
-    }
+//                 const fedate = new Date(dateNow);
+//                 const [hoursEnd, minutesEnd] = endingTime.split(":");
+//                 fedate.setHours(hoursEnd);
+//                 fedate.setMinutes(minutesEnd);
 
-    console.log("slots generated");
+//                 const startFDate = new Date(
+//                   fsdate.toLocaleString("en-US", { timeZone: londonTimezone })
+//                 );
 
-    return res.status(200).json(new ApiResponse(200, {}, "generated slot"));
-  } catch (err) {
-    console.log(err);
-    return res
-      .status(501)
-      .json(new ApiError(501, {}, "Failed To Create Slots"));
-  }
-};
+//                 const endFDate = new Date(
+//                   fedate.toLocaleString("en-US", { timeZone: londonTimezone })
+//                 );
+
+//                 const emptySlot = new Booking({
+//                   date: dateNow,
+//                   currentDay: dayNow,
+//                   slotDay: day,
+//                   startTime: startingTime,
+//                   endTime: endingTime,
+//                   isAvaliable: true,
+//                   bookingStatus: "Available",
+//                   doctorId: doctor._id,
+//                   patientId: null,
+//                   futureStartDate: startFDate,
+//                   futureEndDate: endFDate,
+//                 });
+//                 await emptySlot.save();
+//               }
+
+//               if (i >= timeSlots.length - 1) {
+//                 break;
+//               } else {
+//                 i = i + 1;
+//               }
+//             } else {
+//               //   console.log("doctor not available");
+//             }
+//           }
+        
+      
+//     }
+
+//     console.log("slots generated");
+
+//     return res.status(200).json(new ApiResponse(200, {}, "generated slot"));
+//   } catch (err) {
+//     console.log(err);
+//     return res
+//       .status(501)
+//       .json(new ApiError(501, {}, "Failed To Create Slots"));
+//   }
+// };
+
+
 
 export const deleteByDateRangeById = async (req, res) => {
   // const id = req.params.id;
@@ -468,4 +483,3 @@ export const bookedSlotsAll = async (req, res) => {
     return res.status(501).json(new ApiError(501, {}, "Failed To Find Slots"));
   }
 };
-

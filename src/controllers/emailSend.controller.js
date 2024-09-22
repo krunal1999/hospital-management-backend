@@ -18,6 +18,8 @@ let mailOptions = {
   text: "That was easy!",
 };
 
+
+
 export const sendMail = async (req, res) => {
   //   console.log(req.body);
   mailOptions = req.body;
